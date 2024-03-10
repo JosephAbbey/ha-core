@@ -245,6 +245,15 @@ class BinarySensorTemplate(TemplateEntity, BinarySensorEntity, RestoreEntity):
         self._delay_off = None
         self._delay_off_raw = config.get(CONF_DELAY_OFF)
 
+        render_info = await self._template.async_render_to_info()
+        entities = render_info.entities
+        device_id = entities[0].device_id
+        for entity in entities:
+            if device_id != entity.device_id:
+                break
+        else:
+            self.device_id = device_id
+
     async def async_added_to_hass(self) -> None:
         """Restore state."""
         if (
